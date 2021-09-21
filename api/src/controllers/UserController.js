@@ -15,17 +15,38 @@ const UserController = {
     },
 
     async getArtefactDetail(req, res, next){
-        // const slug = req.slug;
 
-        // console.log(slug)
-        const artefact = await Artefact.findAll({  
+        const artefact = await Artefact.findOne({  
             include: [
                 {
                 model: City
                 }
             ]
             ,where: {
-            id: 1}});
+            slug: req.params.slug}});
+
+            if (!artefact) {
+                res.status(400).send({
+                    "message": "Record not found"
+                })
+            }
+
+            const checkUserArtefact = await UserArtefact.findOne({where: {
+                ArtefactId: artefact.id,
+                CityId: artefact.CityId,
+                UserId: req.user.user.id
+            }});
+
+            if (checkUserArtefact) {
+                // do nothing
+            } else if (!checkUserArtefact){
+                await UserArtefact.create({
+                    ArtefactId: artefact.id,
+                    CityId: artefact.CityId,
+                    UserId: req.user.user.id
+                })
+            }
+
         return res.status(200).send(artefact)
     },
 

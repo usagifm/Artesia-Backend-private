@@ -16,7 +16,7 @@ const routes = (app) => {
     app.get('/', checkToken , (req, res) => res.send('Welcome to Artesia Backend Server ! this is user id =  ' + req.userId ));
     app.post("/oauth/google", passport.authenticate('google-token', { session: false }), AuthController.googleLogin);
     app.get("/api/user", checkToken , UserController.getUserDetail);
-    app.get("/api/artefact", checkToken , UserController.getArtefactDetail);
+    app.get("/api/artefact/:slug", checkToken , UserController.getArtefactDetail);
     app.get("/api/cityartefact", checkToken , UserController.getCityArtefact);
     app.get("/api/getcities", checkToken , UserController.getCities);
 
