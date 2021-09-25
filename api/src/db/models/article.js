@@ -62,7 +62,6 @@ module.exports = (sequelize, DataTypes) => {
     createdBy: DataTypes.INTEGER,
     imgurl_1: {
         type: DataTypes.STRING,
-        allowNull: false,
         validate:{
           notEmpty: true
         }

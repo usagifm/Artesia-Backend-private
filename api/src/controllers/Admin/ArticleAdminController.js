@@ -1,17 +1,60 @@
 import { Article, Category , SubCategory  } from '../../db/models'
+import cloudinary from "../../helper/imageUpload"
 
 const ArtefactAdminController = {
 
 
+    async getCategory(req, res, next) {
+        if (req.user.user.role != 'Admin') {
+            return res.status(401).send({ error: 'Your are not an Admin !' })
+        }
 
+        const category = await Category.findOne({
+            where: {
+                slug: req.params.slug,
+            }
+        });
+
+        if (!category) {
+            res.status(400).send({
+                "message": "Record not found"
+            })
+        }
+
+        const subcategories = await SubCategory.findAll({
+            where: {
+                CategorySlug: req.params.slug,
+            }
+        })
+
+        const data = {
+            category: category,
+            subcategories: subcategories
+        }
+
+        return res.status(200).send(data)
+
+    },
 
     async addCategory(req, res, next) {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
         try {
+
+            function convertToSlug(Text)
+            {
+                return Text
+                    .toLowerCase()
+                    .replace(/[^\w ]+/g,'')
+                    .replace(/ +/g,'-')
+                    ;
+            }
+
+            const slug = convertToSlug(req.body.name) 
+
             await Category.create({
-                slug: req.body.slug,
+                slug: slug,
                 name: req.body.name,
                 createdBy: req.user.user.id
             })
@@ -28,9 +71,21 @@ const ArtefactAdminController = {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
         try {
+            function convertToSlug(Text)
+            {
+                return Text
+                    .toLowerCase()
+                    .replace(/[^\w ]+/g,'')
+                    .replace(/ +/g,'-')
+                    ;
+            }
+
+            const slug = convertToSlug(req.body.name) 
+
             await SubCategory.create({
-                slug: req.body.slug,
+                slug: slug,
                 name: req.body.name,
+                CategorySlug: req.params.CategorySlug,
                 createdBy: req.user.user.id
             })
             res.status(200).send({"message": "Sub Category created succesfully"})
@@ -55,16 +110,30 @@ const ArtefactAdminController = {
             })
         }
 
-        await Category.update(req.body, {
+        function convertToSlug(Text)
+        {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g,'')
+                .replace(/ +/g,'-')
+                ;
+        }
+
+        const slug = convertToSlug(req.body.name) 
+
+
+        await Category.update({
+            slug: slug,
+            name: req.body.name
+        }, {
             where: {
                 slug: req.params.slug,
             }
         });
 
-        const updatedCategory = {
-            slug: req.body.slug,
-            name: req.body.name
-        }
+        const updatedCategory = await Category.findOne({where: {
+            slug: req.params.slug,
+        }});
 
         res.status(200).send(updatedCategory)
     },
@@ -77,6 +146,7 @@ const ArtefactAdminController = {
 
         const slugcheck = await SubCategory.findOne({where: {
             slug: req.params.slug,
+            CategorySlug: req.params.CategorySlug,
         }});
 
         if (!slugcheck) {
@@ -84,17 +154,31 @@ const ArtefactAdminController = {
                 "message": "Record not found"
             })
         }
+        function convertToSlug(Text)
+        {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g,'')
+                .replace(/ +/g,'-')
+                ;
+        }
 
-        await SubCategory.update(req.body, {
+        const slug = convertToSlug(req.body.name) 
+
+
+        await SubCategory.update({
+            slug: slug,
+            name: req.body.name
+        }, {
             where: {
                 slug: req.params.slug,
             }
         });
 
-        const updateSubCategory = {
-            slug: req.body.slug,
-            name: req.body.name
-        }
+        const updateSubCategory = await SubCategory.findOne({where: {
+            slug: req.params.slug,
+            CategorySlug: req.params.CategorySlug,
+        }});
 
         res.status(200).send(updateSubCategory)
     },    
@@ -128,6 +212,7 @@ const ArtefactAdminController = {
        
         const slugCheck = await SubCategory.findOne({where: {
             slug: req.params.slug,
+            CategorySlug: req.params.CategorySlug,
         }});
 
         if (!slugCheck) {
@@ -139,6 +224,7 @@ const ArtefactAdminController = {
         await SubCategory.destroy({
             where: {
                 slug: req.params.slug,
+                CategorySlug: req.params.CategorySlug,
             }
         });
         res.status(200).send({
@@ -170,7 +256,7 @@ const ArtefactAdminController = {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
-        const subcategories = await SubCategory.findAll();
+        const subcategories = await SubCategory.findAll({where: {CategorySlug: req.params.CategorySlug,}});
 
         if (!subcategories || subcategories == '') {
             res.status(400).send({
@@ -204,9 +290,13 @@ const ArtefactAdminController = {
         }
         const article = await Article.findByPk(req.params.id,{
             include: [
+           
                 {
-                model: {Category,SubCategory}
-                }
+                    model: Category
+                    },
+                    {
+                        model: SubCategory
+                        },
             ]});
 
         if (!article) {
@@ -237,7 +327,23 @@ const ArtefactAdminController = {
                     ;
             }
 
+      
+
             const slug = convertToSlug(req.body.title) 
+
+            if(req.body.thumbnail_url != null && req.body.thumbnail_url != ""){
+                try {
+                const result = await cloudinary.uploader.upload(req.body.thumbnail_url, {
+                    public_id: `${req.body.title}_thumbnail`,
+                    quality: 60
+                })
+    
+                req.body.thumbnail_url = result.secure_url
+                    } catch (err) {
+                        res.status(400).send(err)
+                    }
+    
+            }
 
             const articleCollection = await Article.create({
                 slug: slug,
@@ -292,8 +398,19 @@ const ArtefactAdminController = {
 
         let slug = convertToSlug(req.body.title) 
 
-        
+        if(req.body.thumbnail_url != null && req.body.thumbnail_url != ""){
+            try {
+            const result = await cloudinary.uploader.upload(req.body.thumbnail_url, {
+                public_id: `${req.body.title}_thumbnail`,
+                quality: 60
+            })
 
+            req.body.thumbnail_url = result.secure_url
+                } catch (err) {
+                    res.status(400).send(err)
+                }
+
+        }
 
         await Article.update({
             slug: slug,
@@ -317,22 +434,9 @@ const ArtefactAdminController = {
             }
         });
 
-        const updatedArticle = {
-            slug: slug,
-            title: req.body.title,
-            CategorySlug: req.body.CategorySlug,
-            SubCategorySlug: req.body.SubCategorySlug,
-            thumbnail_url: req.body.SubCategorySlug,
-            content: req.body.content,
-            createdBy: req.user.user.id,
-            flag: req.body.flag,
-            imgurl_1: req.body.imgurl_1,
-            imgurl_2: req.body.imgurl_2,
-            imgurl_3: req.body.imgurl_3,
-            imgurl_4: req.body.imgurl_4,
-            imgurl_5: req.body.imgurl_5,
-            createdBy: req.user.user.id
-        }
+        const updatedArticle = await Article.findOne({where: {
+            id: req.params.id,
+        }});
 
         res.status(200).send(updatedArticle)
     },

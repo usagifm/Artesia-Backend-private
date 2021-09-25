@@ -3,38 +3,41 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class SubCategory extends Model {
+  class Tourism extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Article.belongsTo(SubCategory)
+      // define association here
+      Tourism.hasMany(models.Artefact)
     }
   };
-  SubCategory.init({
-    slug: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-        unique:true
-    },
-    CategorySlug: {
+  Tourism.init({
+    CityId: DataTypes.INTEGER,
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate:{
         notEmpty: true
     }}, 
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate:{
-          notEmpty: true
-    }},
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate:{
+        notEmpty: true
+    }}, 
+    photo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate:{
+        notEmpty: true
+    }}, 
     createdBy: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'SubCategory',
+    modelName: 'Tourism',
   });
-  return SubCategory;
+  return Tourism;
 };

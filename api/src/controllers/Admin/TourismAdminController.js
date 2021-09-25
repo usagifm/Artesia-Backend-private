@@ -1,69 +1,37 @@
 import { City, Artefact, Tourism } from '../../db/models'
 import cloudinary from "../../helper/imageUpload"
 
-const CityAdminController = {
+const TourismAdminController = {
 
-    async getCities(req, res, next) {
-        console.log('isinya :' + req.user.user.role)
-
+    async getTourism(req, res, next) {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
 
-        try {
-        const cities = await City.findAll();
-
-    
-        if (!cities || cities == '') {
-            res.status(400).send({
-                "message": "Opps, Its Empty !"
-            })
-        }
-        return res.status(200).send(cities)
-
-    } catch (error) {
-        console.log(error)
-        res.status(400).send(error)
-    }
-
-    },
-
-
-    async getCity(req, res, next) {
-        if (req.user.user.role != 'Admin') {
-            return res.status(401).send({ error: 'Your are not an Admin !' })
-        }
-
-        const city = await City.findOne({
+        const tourism = await Tourism.findOne({
             where: {
-                id: req.params.id
+                id: req.params.id,
+                cityId: req.params.CityId
             }
         });
 
-        if (!city) {
+        if (!tourism) {
             res.status(400).send({
                 "message": "Record not found"
             })
         }
 
-        try {
-
-        const cityTourisms = await Tourism.findAll({
+        const tourismArtefacts = await Artefact.findAll({
             where: {
-                cityId: req.params.id
+                TourismId: req.params.id,
+                cityId: req.params.CityId
             }
         })
 
         const data = {
-            city: city,
-            cityTourisms: cityTourisms
+            tourism: tourism,
+            tourismArtefacts: tourismArtefacts
         }
-
-        } catch (error) {
-            console.log(error)
-            res.status(400).send(error)
-        }
-
 
         return res.status(200).send(data)
 
@@ -72,11 +40,11 @@ const CityAdminController = {
 
 
 
-    async addCity(req, res, next) {
+    async addTourism(req, res, next) {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
-  
+     
 
             if(req.body.photo != null && req.body.photo != ""){
                 try {
@@ -92,35 +60,40 @@ const CityAdminController = {
     
             }
 
-
             try {
 
-            const cityCollection = await City.create({
+            const tourismCollection = await Tourism.create({
                 name: req.body.name,
                 photo: req.body.photo,
                 location: req.body.location,
+                CityId: req.params.CityId,
                 createdBy: req.user.user.id
             })
-            res.status(200).send(cityCollection)
+            res.status(200).send(tourismCollection)
         } catch (error) {
             console.log(error)
             res.status(400).send(error)
         }
     },
 
-    async updateCity(req, res, next) {
+    async updateTourism(req, res, next) {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
 
 
-        const idCheck = await City.findByPk(req.params.id);
+        const idCheck = await Tourism.findOne({where: {
+            id: req.params.id,
+            CityId: req.params.CityId
+        }});
 
         if (!idCheck) {
             res.status(400).send({
                 "message": "Record not found"
             })
         }
+
+
 
         if(req.body.photo != null && req.body.photo != ""){
             try {
@@ -137,35 +110,38 @@ const CityAdminController = {
         }
 
 
-
         try {
 
-        await City.update(req.body, {
+        await Tourism.update(req.body, {
             where: {
-                id: req.params.id
+                id: req.params.id,
+                CityId: req.params.CityId
             }
         });
 
-        const updatedCity = await City.findByPk(req.params.id);
+        const updatedTourism = await Tourism.findOne({where: {
+            id: req.params.id,
+            CityId: req.params.CityId
+        }});
 
-        res.status(200).send(updatedCity)
+        res.status(200).send(updatedTourism)
 
     } catch (error) {
         console.log(error)
         res.status(400).send(error)
     }
-
-
-
+        
     },
 
-    async deleteCity(req, res, next) {
+    async deleteTourism(req, res, next) {
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
-
-
-        const idCheck = await City.findByPk(req.params.id);
+       
+        const idCheck = await Tourism.findOne({where: {
+            id: req.params.id,
+            CityId: req.params.CityId
+        }});
 
         if (!idCheck) {
             res.status(400).send({
@@ -173,21 +149,15 @@ const CityAdminController = {
             })
         }
 
-        try{
-
-        await City.destroy({
+        await Tourism.destroy({
             where: {
-                id: req.params.id
+                id: req.params.id,
+                CityId: req.params.CityId
             }
         });
         res.status(200).send({
-            "message": "City Deleted"
+            "message": "Tourism Deleted"
         })
-
-    } catch (error) {
-        console.log(error)
-        res.status(400).send(error)
-    }
 
     }
 
@@ -195,4 +165,4 @@ const CityAdminController = {
 };
 
 
-export default CityAdminController;
+export default TourismAdminController;

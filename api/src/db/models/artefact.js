@@ -11,9 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Artefact.belongsTo(models.City);
-
-
-
+      Artefact.belongsTo(models.Tourism);
 
       // Artefact.belongsToMany(models.User, {
       //   through: models.UserArtefact,
@@ -73,6 +71,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     CityId: DataTypes.INTEGER,
+    TourismId: DataTypes.INTEGER,
     effect_url: DataTypes.STRING,
     createdBy: DataTypes.INTEGER,
   }, {

@@ -12,9 +12,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       title: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       CityId: {
+        type: Sequelize.INTEGER
+      },
+      TourismId: {
         type: Sequelize.INTEGER
       },
       photo: {

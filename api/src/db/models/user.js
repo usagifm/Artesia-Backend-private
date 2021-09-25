@@ -45,14 +45,13 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true
       }
     },
-    email: {
+    email: DataTypes.STRING,
+    photo: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate:{
         notEmpty: true
       }
     },
-    photo: DataTypes.STRING,
     password: DataTypes.STRING,
     googleId: DataTypes.STRING,
     provider: DataTypes.STRING,

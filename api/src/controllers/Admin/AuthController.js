@@ -9,9 +9,9 @@ async adminGoogleLogin(req, res, next){
     const {email} = req.user;
     const user = await User.findOne({where: {email, role: 'Admin'}});
     const token = jwt.sign({user}, process.env.JWT_SECRET,
-        {
-            expiresIn: '2h' 
-       }
+    //     {
+    //         expiresIn: '2h' 
+    //    }
        )
 
     if(!user){
