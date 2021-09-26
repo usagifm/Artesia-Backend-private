@@ -213,8 +213,6 @@ const UserController = {
             const where = {};
             const page = req.query.page ? parseInt(req.query.page) : 1;
             const per_page = req.query.page ? parseInt(req.query.per_page) : 1;
-
-
             const {CategorySlug, SubCategorySlug, searchByTitle} = req.query;
             where.is_published = true;
             if (searchByTitle) where.title = { [Op.like]: `%${searchByTitle}%`}
@@ -222,9 +220,11 @@ const UserController = {
             if (SubCategorySlug) where.SubCategorySlug = { [Op.eq]: SubCategorySlug}
             
 
+            const offset = 0 + (req.query.page - 1) * per_page
+
             const { count, rows } = await Article.findAndCountAll({
                 where,
-                offset: (page-1) * page,
+                offset: offset,
                 limit: per_page,
                 distinct: true,
                 order: [['published_at', 'ASC']]
@@ -237,7 +237,7 @@ const UserController = {
                 page,
                 per_page
             });
-            if(count <= 0){
+            if(rows <= 0){
                 res.status(404).send({
                     message: 'Oops, no article found'
                 })

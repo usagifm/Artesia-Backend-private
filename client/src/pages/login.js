@@ -31,7 +31,7 @@ const GoogleWrapper = styled(Flex)`
 
     const onSuccess = (response) => {
         const access_token = response.accessToken;
-        axiosApiCall('api/admin/oauth/google', 'post', {access_token})
+        axiosApiCall('api/user/oauth/google', 'post', {access_token})
         .then((res) => {
             const  {user, token} = res.data;
             Cookie.set("token", token)
