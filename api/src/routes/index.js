@@ -30,6 +30,8 @@ const routes = (app) => {
     // User Articles
     app.get("/api/user/articles", UserController.getArticles);
     app.get("/api/user/article/:slug", UserController.getArticle);
+    app.get("/api/user/recent-articles", UserController.getRecentArticles);
+
     
 
     

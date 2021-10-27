@@ -223,6 +223,7 @@ const UserController = {
             const offset = 0 + (req.query.page - 1) * per_page
 
             const { count, rows } = await Article.findAndCountAll({
+                include: [{model: User}],
                 where,
                 offset: offset,
                 limit: per_page,
@@ -265,6 +266,8 @@ const UserController = {
                     {
                         model: SubCategory
                         },
+
+                   {model: User}
             ],where: {
                 slug: req.params.slug}});
 
@@ -274,6 +277,38 @@ const UserController = {
             })
         }
         return res.status(200).send(article)
+    },
+
+
+    async getRecentArticles(req,res,next){
+
+        try{
+
+
+            const rows = await Article.findAll({
+                include: [{model: User},    {
+                    model: Category
+                    },],
+                limit: 5,
+                where: {is_published: true},
+                order: [['createdAt', 'DESC']]
+                
+            });
+    
+            if(rows <= 0){
+                res.status(404).send({
+                    message: 'Oops, no article found'
+                })
+            }
+
+            return res.status(200).send(rows )
+
+        }catch (err){
+            res.status(400).send(err)
+        }
+
+
+
     },
 
 
