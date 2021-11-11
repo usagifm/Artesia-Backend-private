@@ -59,13 +59,13 @@ const CityAdminController = {
             cityTourisms: cityTourisms
         }
 
+        return res.status(200).send(data)
+
+
         } catch (error) {
             console.log(error)
             res.status(400).send(error)
         }
-
-
-        return res.status(200).send(data)
 
     },
 
