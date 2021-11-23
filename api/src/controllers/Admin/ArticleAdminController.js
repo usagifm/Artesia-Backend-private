@@ -99,6 +99,7 @@ const ArtefactAdminController = {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
 
+        try{
 
         const slugcheck = await Category.findOne({where: {
             slug: req.params.slug,
@@ -136,6 +137,10 @@ const ArtefactAdminController = {
         }});
 
         res.status(200).send(updatedCategory)
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error)
+    }
     },
 
     async updateSubCategory(req, res, next) {
@@ -143,6 +148,7 @@ const ArtefactAdminController = {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
 
+        try {
 
         const slugcheck = await SubCategory.findOne({where: {
             slug: req.params.slug,
@@ -181,6 +187,10 @@ const ArtefactAdminController = {
         }});
 
         res.status(200).send(updateSubCategory)
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error)
+    }
     },    
     async deleteCategory(req, res, next) {
         if (req.user.user.role != 'Admin') {
@@ -372,6 +382,9 @@ const ArtefactAdminController = {
 
 
     async updateArticle(req, res, next) {
+
+        try {
+
         if (req.user.user.role != 'Admin') {
             return res.status(401).send({ error: 'Your are not an Admin !' })
         }
@@ -439,6 +452,12 @@ const ArtefactAdminController = {
         }});
 
         res.status(200).send(updatedArticle)
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error)
+    }
+
     },
 
     async deleteArticle(req, res, next) {

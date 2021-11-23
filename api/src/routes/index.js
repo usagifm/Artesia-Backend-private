@@ -16,7 +16,7 @@ const routes = (app) => {
     app.get('/', checkToken , (req, res) => res.send('Welcome to Artesia Backend Server ! this is user id =  ' + req.user.user.id ));
 
     // User Google Sign In
-    app.post("/api/user/oauth/google", passport.authenticate('google-token', { session: false }), AuthController.googleLogin);
+    app.post("/api/user/oauth/google",   passport.authenticate('google-id-token', { session: false }), AuthController.googleLogin);
 
     // User Profile
     app.get("/api/user/profile", checkToken , UserController.getProfile);
@@ -44,7 +44,7 @@ const routes = (app) => {
 
 
     // Admin Google Sign In
-    app.post("/api/admin/oauth/google", passport.authenticate('google-token', { session: false }), AdminAuthController.adminGoogleLogin);
+    app.post("/api/admin/oauth/google", passport.authenticate('google-id-token', { session: false }), AdminAuthController.adminGoogleLogin);
     
     // Admin City 
     app.get("/api/admin/cities", checkTokenAdmin , CityAdminController.getCities);

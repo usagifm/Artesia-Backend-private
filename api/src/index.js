@@ -2,12 +2,14 @@ import cors from 'cors'
 import logger from 'morgan'
 import express from 'express'
 import bodyParser from 'body-parser'
+import passport from "passport";
 import routes from './routes'
 import "./services/google"
 
 
 const app = express()
 
+app.use(passport.initialize());
 app.use(express.json({limit: '50mb'}));
 app.use(cors({ origin: true }))
 app.use(bodyParser.json())
