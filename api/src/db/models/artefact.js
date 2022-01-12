@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Artefact.belongsTo(models.City);
       Artefact.belongsTo(models.Tourism);
-      Artefact.hasOne(models.UserArtefact);
+
+      Artefact.belongsTo(models.UserArtefact);
 
       // Artefact.belongsToMany(models.User, {
       //   through: models.UserArtefact,
