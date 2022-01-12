@@ -115,11 +115,10 @@ const UserController = {
     async getUserRecentArtefacts(req, res, next){
         
     try {
-        const user = await User.findOne({include: [
-            {model:CityArtefactCount}
-            
+        const user = await UserArtefact.findAll({include: [
+            {model: Artefact, include: {model: Tourism }}
         ],
-        where: {id : req.user.user.id},
+        where: {UserId : req.user.user.id},
         });
         return res.status(200).send(user)
     } catch (error) {
