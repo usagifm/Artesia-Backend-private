@@ -112,6 +112,24 @@ const UserController = {
 
     },
 
+    async getUserRecentArtefacts(req, res, next){
+        
+    try {
+        const user = await User.findOne({include: [{model: Artefact, include:{model: Tourism}}
+        ],
+        where: {id : req.user.user.id},
+        limit: 3
+        });
+        return res.status(200).send(user)
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error)
+    }
+
+    },
+
+
+
     async getArtefactDetail(req, res, next){
 
         try {
@@ -283,8 +301,6 @@ const UserController = {
     async getRecentArticles(req,res,next){
 
         try{
-
-
             const rows = await Article.findAll({
                 include: [{model: User},    {
                     model: Category

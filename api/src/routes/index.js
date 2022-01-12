@@ -25,6 +25,7 @@ const routes = (app) => {
     // User Artefacts
     app.get("/api/user/artefact/:slug", checkToken , UserController.getArtefactDetail);
     app.get("/api/user", checkToken , UserController.getUserDetail);
+    app.get("/api/user/recent-artefacts", checkToken , UserController.getUserRecentArtefacts);
 
 
     // User Articles
