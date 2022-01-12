@@ -119,6 +119,8 @@ const UserController = {
             {model: Artefact, include: {model: Tourism }}
         ],
         where: {UserId : req.user.user.id},
+        limit: 3,
+        order: [['createdAt', 'DESC']]
         });
         return res.status(200).send(user)
     } catch (error) {
