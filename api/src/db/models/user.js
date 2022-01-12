@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
 
-    User.hasMany(models.UserArtefact)
+    User.belongsTo(models.UserArtefact);
 
     // models.City.belongsToMany(models.Artefact, {
     //   through: models.UserArtefact,
