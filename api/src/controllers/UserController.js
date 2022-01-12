@@ -115,7 +115,9 @@ const UserController = {
     async getUserRecentArtefacts(req, res, next){
         
     try {
-        const user = await User.findOne({include: [{model: Artefact, limit: 3, include:{model: Tourism}}
+        const user = await User.findOne({include: [
+            {model:CityArtefactCount, limit: 3, include: [{model: Artefact, include:{model: Tourism}}]}
+            
         ],
         where: {id : req.user.user.id},
         });
