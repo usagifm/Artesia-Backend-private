@@ -13,8 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       UserArtefact.belongsTo(models.User);
 
       UserArtefact.belongsTo(models.Artefact);
-      
-      UserArtefact.hasOne(models.Artefact);
     }
   };
   UserArtefact.init({
