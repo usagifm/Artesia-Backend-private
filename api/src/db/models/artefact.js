@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Artefact.belongsTo(models.City);
       Artefact.belongsTo(models.Tourism);
 
-      Artefact.belongsTo(models.UserArtefact);
+      // Artefact.hasOne(models.UserArtefact);
 
       // Artefact.belongsToMany(models.User, {
       //   through: models.UserArtefact,
