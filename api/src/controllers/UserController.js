@@ -116,8 +116,7 @@ const UserController = {
         
     try {
         const user = await User.findOne({include: [
-            {model:CityArtefactCount, include: [{model: Artefact, include:{model: Tourism}}
-            ]}
+            {model:CityArtefactCount}
             
         ],
         where: {id : req.user.user.id},
