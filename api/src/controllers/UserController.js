@@ -18,7 +18,9 @@ const UserController = {
         const discovered_artefacts = await UserArtefact.count({
         where: {UserId : req.user.user.id}});
 
-            user['artefact_counts'] = discovered_artefacts;
+            user = user.toJSON();
+
+            user.artefact_counts = discovered_artefacts;
                 
             return res.status(200).send(user)
 
